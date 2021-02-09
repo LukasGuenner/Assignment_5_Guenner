@@ -31,6 +31,7 @@ rm(list = ls()); cat("\014")
 
 library(tidyverse)
 library(naniar)
+library(dplyr)
 
 ```
 
@@ -77,6 +78,23 @@ library(rlist)
 
 
 Making the first API call to obtain venues in Germany
+
+```{r basics, message=F}
+
+country <- "DE"  # define country
+
+# perform GET request
+venues <- GET(paste0(root, "venues?apikey=", mykey, 
+                     "&locale=*&countryCode=", country)) %>%
+  content()
+
+# describe what you can see from the list obtained after the request
+
+
+```
+
+
+
 
 
 ```{r key, message=F}
