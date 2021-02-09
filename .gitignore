@@ -4,4 +4,4 @@
 .Ruserdata
 
 # ignore API key file
-/ticketmasterKey
+/ticketmasterKey.R
