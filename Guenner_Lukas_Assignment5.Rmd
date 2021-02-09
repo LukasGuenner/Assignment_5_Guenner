@@ -82,6 +82,7 @@ Making the first API call to obtain venues in Germany
 ```{r basics, message=F}
 
 country <- "DE"  # define country
+countryLong <- "Germany"
 
 # perform GET request
 venuesResp <- GET(paste0(root, "venues?apikey=", mykey, 
@@ -186,6 +187,28 @@ dim(venues)[1] - elements
 
 ```{r viz, message=F}
 
+library(ggplot2)
+
+# change format for filtering
+venues$longitude <- as.numeric(venues$longitude)
+venues$latitude <- as.numeric(venues$latitude)
+
+# only select the ones in the coordinate range
+venuesDE <- filter(venues, longitude > 5.866944 & longitude < 15.043611 &
+                     latitude > 47.271679 & latitude < 55.0846)
+
+# using the code given in task
+mapDE <- ggplot() + geom_polygon(
+  aes(x = long, y = lat, group = group), data = map_data("world", region = countryLong),
+  fill = "grey90",color = "black") +
+  theme_void() + coord_quickmap() +
+  geom_point(data = venuesDE, aes(x = longitude, y = latitude), size = 1, 
+        shape = 23, fill = "darkred") +
+  labs(title = paste0("Event locations across ", countryLong), 
+       caption = "Source: ticketmaster.com") +
+  theme(title = element_text(size=8, face='bold'),
+        plot.caption = element_text(face = "italic"))
+mapDE
 
 
 ```
