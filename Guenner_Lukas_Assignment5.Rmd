@@ -123,6 +123,73 @@ for (i in 1:20){
 ```
 
 
+# Interacting with the API - advanced
+
+Extract the venues from the other pages
+
+```{r advanced, message=F}
+
+# entries per page
+size <- venuesResp[["page"]][["size"]]
+
+# get number of pages
+pages <- venuesResp[["page"]][["totalPages"]]
+
+# number of elements to check after the loop
+elements <- venuesResp[["page"]][["totalElements"]]
+
+for (j in 1:pages){
+  venuesResp2 <- GET(paste0(root, "venues?apikey=", mykey, 
+                     "&locale=*&page=", j, "&countryCode=", country)) %>% 
+    content()
+  
+  # subset list to venue data
+  subset <- venuesResp2[["_embedded"]][["venues"]]
+  
+  venues2 <- data.frame(name = character(size),
+                     city = character(size), 
+                     adress = character(size),
+                     postalCode = integer(size),
+                     countryCode = character(size),
+                     url = character(size),
+                     longitude = numeric(size),
+                     latitude = numeric(size),
+                     stringsAsFactors=FALSE)
+  
+  for (i in 1:size){
+  name <- ifelse(is.null(subset[[i]]$name), NA, subset[[i]]$name)
+  city <- ifelse(is.null(subset[[i]]$city$name), NA, subset[[i]]$city$name)
+  address <- ifelse(is.null(subset[[i]]$address$line1), NA, subset[[i]]$address$line1)
+  postalCode <- ifelse(is.null(subset[[i]]$postalCode), NA, subset[[i]]$postalCode)
+  countryCode <- ifelse(is.null(subset[[i]]$country$countryCode), NA,
+                        subset[[i]]$country$countryCode)
+  url <- ifelse(is.null(subset[[i]]$url), NA, subset[[i]]$url)
+  longitude <- ifelse(is.null(subset[[i]]$location$longitude), NA,
+                      subset[[i]]$location$longitude)
+  latitude <- ifelse(is.null(subset[[i]]$location$latitude), NA,
+                     subset[[i]]$location$latitude)
+  
+  venues2[i , ] <- c(name, city, address, postalCode, countryCode, url, 
+                   longitude, latitude)
+  }
+  venues <- rbind(venues, venues2)
+}
+
+# check for correctness
+dim(venues)[1] - elements
+
+
+```
+
+
+
+
+```{r viz, message=F}
+
+
+
+```
+
 
 
 
