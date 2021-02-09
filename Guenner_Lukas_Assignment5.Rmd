@@ -130,9 +130,6 @@ Extract the venues from the other pages
 
 ```{r advanced, message=F}
 
-# entries per page
-size <- venuesResp[["page"]][["size"]]
-
 # get number of pages
 pages <- venuesResp[["page"]][["totalPages"]]
 
@@ -146,6 +143,9 @@ for (j in 1:pages){
   
   # subset list to venue data
   subset <- venuesResp2[["_embedded"]][["venues"]]
+  
+  # number of venues on page
+  size <- length(venuesResp2[["_embedded"]][["venues"]])
   
   venues2 <- data.frame(name = character(size),
                      city = character(size), 
@@ -175,9 +175,6 @@ for (j in 1:pages){
   }
   venues <- rbind(venues, venues2)
 }
-
-# check for correctness
-dim(venues)[1] - elements
 
 
 ```
@@ -214,9 +211,126 @@ mapDE
 ```
 
 
+## Event locations in another country
+
+```{r repeat, message=F}
+
+# clear workspace to start fresh 
+#rm(list = ls()); cat("\014")
+
+country <- "FR"  # define country
+countryLong <- "France"
+
+# perform GET request
+venuesResp <- GET(paste0(root, "venues?apikey=", mykey, 
+                     "&locale=*&countryCode=", country)) %>%
+  content()
+
+# subset list to venue data
+subset <- venuesResp[["_embedded"]][["venues"]]
+
+# initialize data frame to store information
+venues <- data.frame(name = character(),
+                     city = character(), 
+                     adress = character(),
+                     postalCode = integer(),
+                     countryCode = character(),
+                     url = character(),
+                     longitude = numeric(),
+                     latitude = numeric(),
+                     stringsAsFactors=FALSE)
+
+# extract data from list
+for (i in 1:20){
+  name <- ifelse(is.null(subset[[i]]$name), NA, subset[[i]]$name)
+  city <- ifelse(is.null(subset[[i]]$city$name), NA, subset[[i]]$city$name)
+  address <- ifelse(is.null(subset[[i]]$address$line1), NA, subset[[i]]$address$line1)
+  postalCode <- ifelse(is.null(subset[[i]]$postalCode), NA, subset[[i]]$postalCode)
+  countryCode <- ifelse(is.null(subset[[i]]$country$countryCode), NA,
+                        subset[[i]]$country$countryCode)
+  url <- ifelse(is.null(subset[[i]]$url), NA, subset[[i]]$url)
+  longitude <- ifelse(is.null(subset[[i]]$location$longitude), NA,
+                      subset[[i]]$location$longitude)
+  latitude <- ifelse(is.null(subset[[i]]$location$latitude), NA,
+                     subset[[i]]$location$latitude)
+  
+  venues[i, ] <- c(name, city, address, postalCode, countryCode, url, 
+                   longitude, latitude)
+}
+
+#---------------------------------------------------------
+
+# Advanced - data for the rest of the pages
+
+# get number of pages
+pages <- venuesResp[["page"]][["totalPages"]] - 1 # as the last page doesn't contain venues
+
+# number of elements to check after the loop
+elements <- venuesResp[["page"]][["totalElements"]]
+
+for (j in 1:pages){
+  venuesResp2 <- GET(paste0(root, "venues?apikey=", mykey, 
+                     "&locale=*&page=", j, "&countryCode=", country)) %>% 
+    content()
+  
+  # subset list to venue data
+  subset <- venuesResp2[["_embedded"]][["venues"]]
+  
+  # number of venues on page
+  size <- length(venuesResp2[["_embedded"]][["venues"]])
+  
+  venues2 <- data.frame(name = character(size),
+                     city = character(size), 
+                     adress = character(size),
+                     postalCode = integer(size),
+                     countryCode = character(size),
+                     url = character(size),
+                     longitude = numeric(size),
+                     latitude = numeric(size),
+                     stringsAsFactors=FALSE)
+  
+  for (i in 1:size){
+  name <- ifelse(is.null(subset[[i]]$name), NA, subset[[i]]$name)
+  city <- ifelse(is.null(subset[[i]]$city$name), NA, subset[[i]]$city$name)
+  address <- ifelse(is.null(subset[[i]]$address$line1), NA, subset[[i]]$address$line1)
+  postalCode <- ifelse(is.null(subset[[i]]$postalCode), NA, subset[[i]]$postalCode)
+  countryCode <- ifelse(is.null(subset[[i]]$country$countryCode), NA,
+                        subset[[i]]$country$countryCode)
+  url <- ifelse(is.null(subset[[i]]$url), NA, subset[[i]]$url)
+  longitude <- ifelse(is.null(subset[[i]]$location$longitude), NA,
+                      subset[[i]]$location$longitude)
+  latitude <- ifelse(is.null(subset[[i]]$location$latitude), NA,
+                     subset[[i]]$location$latitude)
+  
+  venues2[i , ] <- c(name, city, address, postalCode, countryCode, url, 
+                   longitude, latitude)
+  }
+  venues <- rbind(venues, venues2)
+}
+
+#----------------------------------------------------------------------------
 
 
-```{r key, message=F}
+# change format for filtering
+venues$longitude <- as.numeric(venues$longitude)
+venues$latitude <- as.numeric(venues$latitude)
+
+# only select the ones in the coordinate range
+venuesFR <- filter(venues, longitude > -5.133333 & longitude < 9.55 &
+                     latitude > 41,333333 & latitude < 51.083333)
+
+# using the code given in task
+mapFR <- ggplot() + geom_polygon(
+  aes(x = long, y = lat, group = group), data = map_data("world", region = countryLong),
+  fill = "grey90",color = "black") +
+  theme_void() + coord_quickmap() +
+  geom_point(data = venuesFR, aes(x = longitude, y = latitude), size = 1, 
+        shape = 23, fill = "darkred") +
+  labs(title = paste0("Event locations across ", countryLong), 
+       caption = "Source: ticketmaster.com") +
+  theme(title = element_text(size=8, face='bold'),
+        plot.caption = element_text(face = "italic"))
+mapFR
 
 
 
