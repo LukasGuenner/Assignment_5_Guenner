@@ -84,12 +84,41 @@ Making the first API call to obtain venues in Germany
 country <- "DE"  # define country
 
 # perform GET request
-venues <- GET(paste0(root, "venues?apikey=", mykey, 
+venuesResp <- GET(paste0(root, "venues?apikey=", mykey, 
                      "&locale=*&countryCode=", country)) %>%
   content()
 
 # describe what you can see from the list obtained after the request
 
+
+# subset list to venue data
+subset <- venuesResp[["_embedded"]][["venues"]]
+
+# initialize data frame to store information
+venues <- data.frame(name = character(),
+                     city = character(), 
+                     adress = character(),
+                     postalCode = integer(),
+                     countryCode = character(),
+                     url = character(),
+                     longitude = numeric(),
+                     latitude = numeric(),
+                     stringsAsFactors=FALSE)
+
+# extract data from list
+for (i in 1:20){
+  name <- subset[[i]]$name
+  city <- subset[[i]]$city$name
+  address <- subset[[i]]$address$line1
+  postalCode <- subset[[i]]$postalCode
+  countryCode <- subset[[i]]$country$countryCode
+  url <- subset[[i]]$url
+  longitude <- subset[[i]]$location$longitude
+  latitude <- subset[[i]]$location$latitude
+  
+  venues[i, ] <- c(name, city, address, postalCode, countryCode, url, 
+                   longitude, latitude)
+}
 
 ```
 
