@@ -49,6 +49,7 @@ Information on the API:
 
 ATTENTION !!!
 5000 API calls per day and rate limitation of 5 requests per second!
+Deep Paging: we only support retrieving the 1000th item. i.e. ( size * page < 1000)
 
 ```{r key, message=F}
 
@@ -58,10 +59,12 @@ root <- "https://app.ticketmaster.com/discovery/v2/"
 ```
 
 
+## Interaction with the API - the basics
 
 
 ```{r libraries, message=F}
 
+# loading required packages
 if (!require("jsonlite")) install.packages("jsonlite")
 if (!require("httr")) install.packages("httr")
 if (!require("rlist")) install.packages("rlist")
@@ -73,6 +76,7 @@ library(rlist)
 ```
 
 
+Making the first API call to obtain venues in Germany
 
 
 ```{r key, message=F}
