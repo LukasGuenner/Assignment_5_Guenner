@@ -1,1 +1,39 @@
+---
+title: "DSPM - Assignment 5"
+author: 'Submitted by Lukas Günner (Student-ID: 5393972)'
+date: "02/10/2021"
+output: 
+  html_document:
+    toc: True
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Working directory:
+# Load project to obtain correct working directory
+
+```
+I worked together with Max Haberl (Student ID: 5407084). I hereby assure that my submission is in line with the *Code of Conduct* outlined on the lecture slides.
+
+## Preparation
+
+Before starting this assignment, I am clearing my workspace and console and then 
+loading the packages, necessary to complete this assignment. 
+```{r prep, message=FALSE}
+
+rm(list = ls()); cat("\014")
+
+if (!require("jsonlite")) install.packages("jsonlite")
+if (!require("httr")) install.packages("httr")
+if (!require("rlist")) install.packages("rlist")
+if (!require("tidyverse")) install.packages("tidyverse")
+if (!require("naniar")) install.packages("naniar")
+
+library(jsonlite)
+library(httr)
+library(rlist)
+library(tidyverse)
+library(naniar)
+
+```
