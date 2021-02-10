@@ -37,7 +37,7 @@ library(dplyr)
 
 ## Getting to know the API
 
-read documentation of the ticketmaster.com API
+I am sourcing my API key from a separate script not included in the GitHub repository.
 
 ```{r key, message=F}
 
@@ -48,9 +48,7 @@ source("ticketmasterKey.R")
 
 Information on the API:
 
-ATTENTION !!!
-5000 API calls per day and rate limitation of 5 requests per second!
-Deep Paging: we only support retrieving the 1000th item. i.e. ( size * page < 1000)
+After familiarizing with the API functionality and documentation, the following information is relevant for my application. The rate limits are 5000 API calls per day and there is a rate limitation of 5 requests per second! Further there is another limitation for Deep Paging: we only support retrieving the 1000th item. i.e. ( size * page < 1000). This however is not relevant for me as the venues for Germany and France do not exceed 1000 pages.
 
 ```{r root, message=F}
 
@@ -77,9 +75,9 @@ library(rlist)
 ```
 
 
-Making the first API call to obtain venues in Germany
 
 ```{r basics, message=F}
+# Making the first API call to obtain venues in Germany
 
 country <- "DE"  # define country
 countryLong <- "Germany"
@@ -123,13 +121,13 @@ glimpse(venues)
 ```
 
 
- describe what you can see from the list obtained after the request
+ After performing the GET request, I obtain a list consisting of three lists itself. One containing the venue information, one with links that specify the directory paths to access different pages and current information and one list informing about the number of pages, elements and total information available. The lists contain nested lists themselves. Simply applying *list.stack()* to the venues list is thus not possible. Using the list structure, each information peace to be extracted is therefore addressed individually and aggregated via a loop. This enables me to collect the data in a data frame as displayed here.
 
 
 
 ## Interacting with the API - advanced
 
-Extract the venues from the other pages
+I am now extending data extraction by extracting all possible venue locations in Germany from all available pages. For this I am using a loop to loop through all the pages with a nested loop to loop through each list, as done above. To access individual pages I simply have to add the *&page=x* parameter to the url. The response object I then obtain are the same ones as above, which enables me to employ the same method for extracting the data.
 
 ```{r advanced, message=F}
 
@@ -183,7 +181,7 @@ for (j in 1:pages){
 ```
 
 
-
+The following map displays all German event venues scattered across Germany.
 
 ```{r viz, message=F}
 
@@ -216,7 +214,10 @@ mapDE
 
 ## Event locations in another country
 
-```{r repeat, message=F}
+The analysis done above is now repeated for another European country. I selected France as my choice. Repeating the analysis is rather easy, as all I had to change in the code was the country defined as a variable in the beginning and the coordinate ranges for the venues included in the map. I then copied the code from above, adjusted the variables and ran the analysis for France providing me with the map seen below. 
+One could make the repetition process more efficient by specifying the analysis above as a function with input arguments country and coordinate ranges, so that one would only have to call the function again for considering a different country.
+
+```{r repeat, message=F, echo=FALSE}
 
 # clear workspace to start fresh 
 #rm(list = ls()); cat("\014")
@@ -260,6 +261,8 @@ for (i in 1:20){
   venues[i, ] <- c(name, city, address, postalCode, countryCode, url, 
                    longitude, latitude)
 }
+
+glimpse(venues)
 
 #---------------------------------------------------------
 
@@ -339,7 +342,7 @@ mapFR
 
 ```
 
-
+This concludes the assignment. All programming steps and implementations can be followed on GitHub via the repository link given above.
 
 
 
