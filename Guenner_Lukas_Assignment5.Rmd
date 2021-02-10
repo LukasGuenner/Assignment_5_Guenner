@@ -219,8 +219,7 @@ One could make the repetition process more efficient by specifying the analysis 
 
 ```{r repeat, message=F, echo=FALSE}
 
-# clear workspace to start fresh 
-#rm(list = ls()); cat("\014")
+# repeating tasks 2 to 5 for France
 
 country <- "FR"  # define country
 countryLong <- "France"
