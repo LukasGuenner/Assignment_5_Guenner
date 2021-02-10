@@ -52,7 +52,7 @@ ATTENTION !!!
 5000 API calls per day and rate limitation of 5 requests per second!
 Deep Paging: we only support retrieving the 1000th item. i.e. ( size * page < 1000)
 
-```{r key, message=F}
+```{r root, message=F}
 
 # information from the API documentation
 root <- "https://app.ticketmaster.com/discovery/v2/"
@@ -89,9 +89,6 @@ venuesResp <- GET(paste0(root, "venues?apikey=", mykey,
                      "&locale=*&countryCode=", country)) %>%
   content()
 
-# describe what you can see from the list obtained after the request
-
-
 # subset list to venue data
 subset <- venuesResp[["_embedded"]][["venues"]]
 
@@ -121,10 +118,16 @@ for (i in 1:20){
                    longitude, latitude)
 }
 
+glimpse(venues)
+
 ```
 
 
-# Interacting with the API - advanced
+ describe what you can see from the list obtained after the request
+
+
+
+## Interacting with the API - advanced
 
 Extract the venues from the other pages
 
