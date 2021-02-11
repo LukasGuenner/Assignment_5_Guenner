@@ -175,6 +175,8 @@ for (j in 1:pages){
                    longitude, latitude)
   }
   venues <- rbind(venues, venues2)
+  
+  Sys.sleep(0.2)
 }
 
 
@@ -311,6 +313,8 @@ for (j in 1:pages){
                    longitude, latitude)
   }
   venues <- rbind(venues, venues2)
+  
+  Sys.sleep(0.2)
 }
 
 #----------------------------------------------------------------------------
