@@ -18,7 +18,7 @@ I worked together with Max Haberl (Student ID: 5407084). I hereby assure that my
 
 The working history for this assignment can be accessed via this link:
 
-https://github.com/LukasGuenner/Assignment_5_Guenner.git
+`(Repository Link)`[https://github.com/LukasGuenner/Assignment_5_Guenner.git]
 
 
 ## Preparation
@@ -221,7 +221,7 @@ One could make the repetition process more efficient by specifying the analysis 
 
 ```{r repeat, message=F, echo=FALSE}
 
-# repeating tasks 2 to 5 for France
+# repeating tasks 2 to 5 for France (using copy paste method of code from above)
 
 country <- "FR"  # define country
 countryLong <- "France"
